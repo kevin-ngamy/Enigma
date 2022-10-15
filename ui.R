@@ -42,5 +42,17 @@ ui <- fluidPage(
     mainPanel(
         tabsetPanel(type = "tabs", id = "tabselected", selected = 1,
                     tabPanel("Data Representation",
-                             plotlyOutput("FinancialData", height = "500px"), value = 1))))
+                             fluidRow(
+                                 column(1, width = 2, 
+                                        uiOutput("MetLevelPerLeg")), 
+                                 column(2, width = 2,
+                                        uiOutput("NamePerLeg")), 
+                                 column(3, width = 2,
+                                        uiOutput("MetTypePerLeg")), 
+                                 column(4, width = 2,
+                                        uiOutput("BetTypePerLeg")), 
+                                 column(5, width = 2,
+                                        uiOutput("BetLinePerLeg"))
+                             ),
+                             value = 1))))
 
