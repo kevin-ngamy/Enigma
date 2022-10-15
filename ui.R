@@ -42,17 +42,10 @@ ui <- fluidPage(
     mainPanel(
         tabsetPanel(type = "tabs", id = "tabselected", selected = 1,
                     tabPanel("Data Representation",
-                             fluidRow(
-                                 column(1, width = 2, 
-                                        uiOutput("MetLevelPerLeg")), 
-                                 column(2, width = 2,
-                                        uiOutput("NamePerLeg")), 
-                                 column(3, width = 2,
-                                        uiOutput("MetTypePerLeg")), 
-                                 column(4, width = 2,
-                                        uiOutput("BetTypePerLeg")), 
-                                 column(5, width = 2,
-                                        uiOutput("BetLinePerLeg"))
-                             ),
+                             DT::dataTableOutput("Data1", width = "100%"),
+                             DT::dataTableOutput("Data2", width = "100%"),
+                             DT::dataTableOutput("Data3", width = "100%"),
+                             DT::dataTableOutput("Data4", width = "100%"),
+                             DT::dataTableOutput("Data5", width = "100%"),
                              value = 1))))
 

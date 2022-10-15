@@ -54,11 +54,85 @@ shinyServer(function(input, output, session) {
             
             
         }, simplify = F)
-        browser()
-        indf <- getSymbols(Symbols = "INDF.JK", src = "yahoo", from = Sys.Date() - 1953, to = Sys.Date(), auto.assign = F)
-        bca <- getSymbols(Symbols = "BBCA.JK", src = "yahoo", from = Sys.Date() - 1953, to = Sys.Date(), auto.assign = F)
-        antm <- getSymbols(Symbols = "ANTM.JK", src = "yahoo", from = Sys.Date() - 1953, to = Sys.Date(), auto.assign = F)
-        untr <- getSymbols(Symbols = "UNTR.JK", src = "yahoo", from = Sys.Date() - 1953, to = Sys.Date(), auto.assign = F)
+
+        #Now Show 5 of the data divided into 5 chunks of table
+        for (i in 1:length(DataTicker.All)) {
+            # browser()
+            output$Data1 <- renderDataTable({
+                DT::datatable(
+                    DataTicker.All[[1]], 
+                    options = list(
+                        dom = 't',
+                        deferRender = TRUE,
+                        scroller = TRUE,
+                        scrollY = 750,
+                        scrollX = 750,
+                        pagewidth = 500, 
+                        dom = 'lBfrtip', paging = FALSE)
+                )
+            })
+            
+            output$Data2 <- renderDataTable({
+                DT::datatable(
+                    DataTicker.All[[2]], 
+                    options = list(
+                        dom = 't',
+                        deferRender = TRUE,
+                        scroller = TRUE,
+                        scrollY = 750,
+                        scrollX = 750,
+                        pagewidth = 500,
+                        dom = 'lBfrtip', paging = FALSE
+                    )
+                )
+            })
+            
+            output$Data3 <- renderDataTable({
+                DT::datatable(
+                    DataTicker.All[[3]], 
+                    options = list(
+                        dom = 't',
+                        deferRender = TRUE,
+                        scroller = TRUE,
+                        scrollY = 750,
+                        scrollX = 750,
+                        pagewidth = 500,
+                        dom = 'lBfrtip', paging = FALSE
+                    )
+                )
+            })
+            
+            output$Data4 <- renderDataTable({
+                DT::datatable(
+                    DataTicker.All[[4]], 
+                    options = list(
+                        dom = 't',
+                        deferRender = TRUE,
+                        scroller = TRUE,
+                        scrollY = 750,
+                        scrollX = 750,
+                        pagewidth = 500, 
+                        dom = 'lBfrtip', paging = FALSE
+                    )
+                )
+            })
+            
+            output$Data5 <- renderDataTable({
+                DT::datatable(
+                    DataTicker.All[[5]], 
+                    options = list(
+                        dom = 't',
+                        deferRender = TRUE,
+                        scroller = TRUE,
+                        scrollY = 750,
+                        scrollX = 750,
+                        pagewidth = 500, 
+                        dom = 'lBfrtip', paging = FALSE
+                    )
+                )
+            })
+            
+        }
         
     })
     
