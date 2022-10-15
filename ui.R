@@ -42,17 +42,5 @@ ui <- fluidPage(
     mainPanel(
         tabsetPanel(type = "tabs", id = "tabselected", selected = 1,
                     tabPanel("Data Representation",
-                             fluidRow(
-                                 column(1, width = 2, 
-                                        DT::dataTableOutput("Data1")), 
-                                 column(2, width = 2,
-                                        DT::dataTableOutput("Data2")), 
-                                 column(3, width = 2,
-                                        DT::dataTableOutput("Data3")), 
-                                 column(4, width = 2,
-                                        DT::dataTableOutput("Data4")), 
-                                 column(5, width = 2,
-                                        DT::dataTableOutput("Data4"))
-                             ),
-                             value = 1))))
+                             plotlyOutput("FinancialData", height = "500px"), value = 1))))
 

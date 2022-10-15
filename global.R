@@ -30,7 +30,7 @@ library(quantreg)
 library(xts)
 
 ## Define Financial Tricker choices based on financial instruments type
-Stocks.Tickers <- read.csv("StockListsIDX.csv")
+# Stocks.Tickers <- read.csv("StockListsIDX.csv")
 Stocks.Tickers <- c("BBCA", "BBRI", "INDF", "ANTM", "WIKA", "TLKM", "UNVR")
 ETF.Tickers <- c("ETF1", "ETF2", "ETF3")
 Bonds.Tickers <- c("Bonds1", "Bonds2", "Bonds3")
