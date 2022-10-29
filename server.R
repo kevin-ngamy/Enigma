@@ -147,7 +147,9 @@ shinyServer(function(input, output, session) {
     ##Render visualization
     output$TickerDataViz <- renderPlot({
         chartSeries(Ticker.Viz(), theme="white") 
+        addSMA(n = input$MA1, on = 1, with.col = Cl, overlay = TRUE, col = "brown")
         addSMA(n = input$MA2, on = 1, with.col = Cl, overlay = TRUE, col = "brown")
+        addBBands(n = input$BB.MAperiod, sd = input$BB.sdev, maType = "SMA", draw = 'bands', on = -1)
         # observeEvent(input$AddIndicatorViz, {
             
             ##Render visualization
