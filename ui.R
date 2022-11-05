@@ -25,12 +25,6 @@ ui <- fluidPage(
                                      label = "Dates:",
                                      start = "2019-01-01",
                                      end = paste(Sys.Date())), 
-                         ## Input for table/chart representation
-                         # pickerInput(inputId = "Format", 
-                         #             label = "Data Representation", 
-                         #             choices = c("Table", "Graph"), 
-                         #             multiple = F), 
-                         ## Action Button to represent the data
                          br(),
                          actionBttn(inputId = "ShowData", block = T,
                                        label = "Show Data",
@@ -86,6 +80,33 @@ ui <- fluidPage(
                                     style = "unite", 
                                     color = "primary",
                                     icon = icon("table"), size = "md")),
+        
+        conditionalPanel(condition = "input.tabselected==3",
+                         align = "left",
+                         tags$h3("Financial Data Summary"), 
+                         ## Reactive Dropdown Selections of Financial tricker corresponds to Instruments selections
+                         pickerInput(inputId = "FinTicker.FinSummary", 
+                                     label = "Select Ticker", 
+                                     choices = "",
+                                     options = list(`live-search` = TRUE, `actions-box` = TRUE),
+                                     multiple = F),
+                         ## Period Slider
+                         dateRangeInput(inputId = "DatesRange.FinSummary",
+                                        label = "Dates:",
+                                        start = "2019-01-01",
+                                        end = paste(Sys.Date())), 
+                         ## Input for table/chart representation
+                         pickerInput(inputId = "AnalType.FinSummary",
+                                     label = "Summary Type",
+                                     choices = c("Log Return", "Simple Return", "Return Distribution"),
+                                     selected = "Log Return",
+                                     multiple = F),
+                         br(),
+                         actionBttn(inputId = "ShowData.FinSummary", block = T,
+                                    label = "Show Data",
+                                    style = "unite", 
+                                    color = "primary",
+                                    icon = icon("table"), size = "md")),
         width = 3), 
     mainPanel(
         tabsetPanel(type = "tabs", id = "tabselected", selected = 1,
@@ -94,5 +115,21 @@ ui <- fluidPage(
                              value = 1), 
                     tabPanel("Visualization",
                              plotOutput("TickerDataViz", height = "700px"),
-                             value = 2))))
+                             value = 2), 
+                    navbarMenu("Statistical Analysis",
+                               ## Sub Tab panel
+                               tabPanel("Statistical Summary",
+                                        plotOutput("SummaryPlot", height = "700px"),
+                                        plotOutput("SummaryTable", height = "700px"),
+                                        value = 3),
+                               tabPanel("Statistical Test",
+                                        plotOutput("AutocorrPlot", height = "700px"),
+                                        value = 4), 
+                               tabPanel("Statistical Predictions",
+                                        plotOutput("StatsPredictions", height = "700px"),
+                                        value = 5), 
+                               tabPanel("Statistical Simulations",
+                                        plotOutput("StatsSims", height = "700px"),
+                                        value = 6))
+                    )))
 

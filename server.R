@@ -122,28 +122,7 @@ shinyServer(function(input, output, session) {
         TickerDataViz <- DataViz[[input$Sel.TickerViz]]
         TickerDataViz
     })
-    
-    ##Add technical indicator
-    # Ticker.Viz.Indicator <- eventReactive(input$AddIndicatorViz, {
-    #     browser()
-    #     
-    #     
-    #     input$MA1
-    #     
-    #     ##Render visualization
-    #     output$TickerDataViz <- renderPlot({
-    #         chartSeries(Ticker.Viz(), theme="white") 
-    #     })
-    #     
-    #     addSMA(n = input$MA2, on = 1, with.col = Cl, overlay = TRUE, col = "brown")
-    #     
-    #     DataViz <- TickerData()[["XTS"]]
-    #     #Filter
-    #     TickerDataViz <- DataViz[[input$Sel.TickerViz]]
-    #     TickerDataViz
-    # })
-    
-    
+
     ##Render visualization
     output$TickerDataViz <- renderPlot({
         chartSeries(Ticker.Viz(), theme="white") 
@@ -159,5 +138,43 @@ shinyServer(function(input, output, session) {
             # })
         # })
     })
+    
+    ##  3rd Sub Tab (Statistical Summary)
+    #Update ticker choice
+    observeEvent(TickerData(), {
+        updatePickerInput(session = session, inputId = "FinTicker.FinSummary", 
+                          choices = React.FinInst$TickerSelects)
+    })
+    
+    Fin.Stats.Summary <- eventReactive(input$ShowData.FinSummary, {
+        
+        Data <- TickerData()[["XTS"]] #pull data
+        #Take Difference
+        Return.Dt <- lapply(Data, function(x) {
+            
+            #Take the 1 day difference 
+            Logdt <- log(x)
+            #Impute missval
+            Logdt <- na.locf(Logdt, na.rm = T, fromLast = T)
+            Lagdt <- diff(Logdt, lag = 1) #lag data
+            Lagdt
+        })
+        
+        #Filter Returndt
+        Return.Dt <- Return.Dt[c(input$FinTicker.FinSummary)]
+        Return.Dt
+    })
+    
+    output$SummaryPlot <- renderPlot({
+        Data <- Fin.Stats.Summary()[[input$FinTicker.FinSummary]]
+        plot(Data[,grepl("Adjusted", colnames(Data))])
+    })
+    
+    # output$SummaryTable <- renderDataTable({
+    #     Fin.Stats.Summary()
+    #     browser()
+    # })
+    
+    
 
 })
