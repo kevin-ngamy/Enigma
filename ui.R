@@ -98,7 +98,7 @@ ui <- fluidPage(
                          ## Input for table/chart representation
                          pickerInput(inputId = "AnalType.FinSummary",
                                      label = "Summary Type",
-                                     choices = c("Log Return", "Simple Return", "Return Distribution"),
+                                     choices = c("Log Return", "Log Return Distribution", "Simple Return"),
                                      selected = "Log Return",
                                      multiple = F),
                          br(),
@@ -119,8 +119,9 @@ ui <- fluidPage(
                     navbarMenu("Statistical Analysis",
                                ## Sub Tab panel
                                tabPanel("Statistical Summary",
-                                        plotOutput("SummaryPlot", height = "700px"),
-                                        plotOutput("SummaryTable", height = "700px"),
+                                        plotOutput("SummaryPlot", height = "500px"),
+                                        br(),  tags$h4("Distributions Summary"),
+                                        tableOutput("SummaryTable"),
                                         value = 3),
                                tabPanel("Statistical Test",
                                         plotOutput("AutocorrPlot", height = "700px"),

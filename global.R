@@ -28,6 +28,7 @@ library(lubridate)
 library(quantmod)
 library(quantreg)
 library(xts)
+library(fBasics)
 
 ## Define Financial Tricker choices based on financial instruments type
 # Stocks.Tickers <- read.csv("StockListsIDX.csv")

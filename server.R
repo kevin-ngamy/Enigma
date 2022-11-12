@@ -38,9 +38,17 @@ shinyServer(function(input, output, session) {
     ## Data Representation (Reactive on ShowData button)
     TickerData <- eventReactive(input$ShowData, {
         
+        #Define Progress Bar
+        YahooScprProg <- shiny::Progress$new()
+        # Make sure it closes when we exit this reactive, even if there's an error
+        on.exit(YahooScprProg$close())
+        YahooScprProg$set(message = paste0("Scraping Financial Data from Yahoo Finance "), value = 0)
+        progincrement <<- 1/length(React.FinInst$TickerSelects)
+        
         ## Read in Ticker data from yahoo via quantmod package
         DataTicker.xts <- sapply(React.FinInst$TickerSelects, FUN = function(x) {
             
+            YahooScprProg$inc(amount = progincrement, detail = paste0("Reading ", paste0(x, ".JK ", input$FinInstrument, " data")))
             ## Read in raw data from yahoo finance
             ts.data.raw <- getSymbols(Symbols = paste0(x, ".JK"), src = "yahoo", from = input$DatesRange[1], to = input$DatesRange[2], auto.assign = F)
             
@@ -72,19 +80,7 @@ shinyServer(function(input, output, session) {
         DataTicker.All <- data.frame(rbindlist(DataTicker.All))
         DataTicker.All <- subset(DataTicker.All, select = c(Ticker, Date, Open, High, Low, Close, Volume, Adjusted))
         
-        # #Transform data format to panel style
-        # DataTicker.Panel  <- DataTicker.All %>%
-        #     pivot_longer(cols = c("Open", "High", "Low", "Close", "Volume", "Adjusted"),
-        #                  names_to = c("Open", "High", "Low", "Close", "Volume", "Adjusted"),
-        #                  values_to = paste(input$PickMetrics))
-        
-        # DataTicker <- getSymbols(Symbols = paste0(React.FinInst$TickerSelects, ".JK"), src = "yahoo", from = input$DatesRange[1], to = input$DatesRange[2], auto.assign = F)
-        
-        ##Convert Ticker data to dataframe for representation
-        # DataTicker.df <- data.frame(date=index(DataTicker), coredata(DataTicker))
-        # Order data from the most recent
-        # DataTicker.df <- DataTicker.df %>%
-        #     arrange(desc(date))
+        #store both data as list
         list(DataTicker = DataTicker.All, XTS = DataTicker.xts)
         
     })
@@ -129,14 +125,6 @@ shinyServer(function(input, output, session) {
         addSMA(n = input$MA1, on = 1, with.col = Cl, overlay = TRUE, col = "brown")
         addSMA(n = input$MA2, on = 1, with.col = Cl, overlay = TRUE, col = "brown")
         addBBands(n = input$BB.MAperiod, sd = input$BB.sdev, maType = "SMA", draw = 'bands', on = -1)
-        # observeEvent(input$AddIndicatorViz, {
-            
-            ##Render visualization
-            # output$TickerDataViz <- renderPlot({
-                # chartSeries(Ticker.Viz(), theme="white")
-                # addSMA(n = input$MA2, on = 1, with.col = Cl, overlay = TRUE, col = "brown")
-            # })
-        # })
     })
     
     ##  3rd Sub Tab (Statistical Summary)
@@ -162,19 +150,45 @@ shinyServer(function(input, output, session) {
         
         #Filter Returndt
         Return.Dt <- Return.Dt[c(input$FinTicker.FinSummary)]
-        Return.Dt
+        list(Data = Return.Dt, AnalType = input$AnalType.FinSummary)
     })
     
+    #summViz
     output$SummaryPlot <- renderPlot({
-        Data <- Fin.Stats.Summary()[[input$FinTicker.FinSummary]]
-        plot(Data[,grepl("Adjusted", colnames(Data))])
+        #Conditional Viz
+        Data <- Fin.Stats.Summary()[["Data"]][[input$FinTicker.FinSummary]]
+        print(Data)
+        FinalViz <- Data[,grepl("Adjusted", colnames(Data))] 
+        
+        if (Fin.Stats.Summary()[["AnalType"]] == "Log Return") {
+            plot(FinalViz)
+        } else if (Fin.Stats.Summary()[["AnalType"]] == "Log Return Distribution") {
+
+            FinalViz <- FinalViz[!is.na(FinalViz)]
+            hist(FinalViz, prob = TRUE, breaks = 30, ylim = c(0, 50),
+                 main = paste(input$FinTicker.FinSummary, " Log Return Distribution"))
+            lines(density(FinalViz), col = "blue", lwd = 3)
+            
+        } else if (Fin.Stats.Summary()[["AnalType"]] == "Simple Return") {
+            FinalViz <- FinalViz[!is.na(FinalViz)]
+            hist(exp(FinalViz), prob = TRUE, breaks = 30, ylim = c(0, 50),
+                 main = paste(input$FinTicker.FinSummary, " Simple Return Distribution"))
+            lines(density(exp(FinalViz)), col = "blue", lwd = 3)
+        }
     })
     
-    # output$SummaryTable <- renderDataTable({
-    #     Fin.Stats.Summary()
-    #     browser()
-    # })
-    
-    
+    #SummPRint
+    output$SummaryTable <- renderTable({
+        Data <- Fin.Stats.Summary()[["Data"]][[input$FinTicker.FinSummary]]
+        Data <- Data[,colnames(Data)[grepl("Adjusted", colnames(Data))]]
+        CurrTicker <- colnames(Data)[grepl("Adjusted", colnames(Data))]
+        StatSum <- data.frame(basicStats(Data))
+        StatSum <- data.frame(Stats = rownames(StatSum), Vals = StatSum[,CurrTicker])
+        #pivot
+        StatSum <- StatSum %>% pivot_wider(names_from = Stats, values_from = Vals)
+        StatSum
+        
+        
+    })
 
 })
