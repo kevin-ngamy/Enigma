@@ -32,7 +32,7 @@ library(fBasics)
 
 # Read in Stock ticker list
 Stocks.Tickers <- read.csv("StockTickers.csv")
-Stocks.Tickers <- Stocks.Tickers$Daftar.Saham
+Stocks.Tickers <- Stocks.Tickers$Kode
 
 ## Define Financial Tricker choices based on financial instruments type
 # Stocks.Tickers <- read.csv("StockListsIDX.csv")
